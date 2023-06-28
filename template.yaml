@@ -1,0 +1,349 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  echo-voice
+
+  Vanity phone number that echoes back the caller's phone number.
+
+Parameters:
+  ConnectInstance:
+    Type: String
+    Description: AWS Connect Instance ARN
+    Default: arn:aws:connect:us-east-1:123456789012:instance/d4444444-d444-d444-d444-dddddddddddd
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+Resources:
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-table'
+      AttributeDefinitions:
+        - AttributeName: callerNumber
+          AttributeType: S
+      KeySchema:
+        - AttributeName: callerNumber
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-function'
+      Handler: index.lambda_handler
+      Runtime: python3.10
+      CodeUri: backend/LambdaFunction
+      Role: !GetAtt LambdaFunctionRole.Arn
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoDBTable
+  LambdaFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${AWS::StackName}-function-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub '${AWS::StackName}-function-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:GetItem
+                  - dynamodb:UpdateItem
+                Resource: !GetAtt DynamoDBTable.Arn
+        - PolicyName: !Sub '${AWS::StackName}-logs-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+  DynamoDBFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-dynamodb-function'
+      Handler: index.lambda_handler
+      Runtime: python3.10
+      CodeUri: backend/DynamoDBFunction
+      Role: !GetAtt DynamoDBFunctionRole.Arn
+      Timeout: 30
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DynamoDBTable
+      Events:
+        FetchCallers:
+          Type: Api
+          Properties:
+            Path: /fetch
+            Method: post
+            RestApiId: !Ref FetchCallersApi
+  DynamoDBFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub '${AWS::StackName}-dynamodb-function-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Scan
+                Resource: !GetAtt DynamoDBTable.Arn
+        - PolicyName: !Sub '${AWS::StackName}-dynamodb-logs-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+  FetchCallersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          version: '2018-11-29T18:24:29Z'
+          title: !Sub ${AWS::StackName}-FetchCallersApi
+        paths:
+          /fetch:
+            post:
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBFunction.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
+
+            
+  ConnectInstanceAttachRole:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt LambdaFunction.Arn
+      Principal: connect.amazonaws.com
+      SourceArn: !Ref ConnectInstance
+      SourceAccount: !Ref AWS::AccountId
+
+
+
+  ConnectFlowContactFlow:
+    Type: AWS::Connect::ContactFlow
+    Properties:
+      InstanceArn: !Ref ConnectInstance
+      Name: !Sub '${AWS::StackName}-contact-flow'
+      Type: CONTACT_FLOW
+      State: ACTIVE
+      Description: !Sub '${AWS::StackName}-contact-flow'
+      Content: !Sub |
+        {
+          "Version":"2019-10-30",
+          "StartAction":"a1111111-a111-a111-a111-aaaaaaaaaaaa",
+          "Metadata":{
+              "entryPointPosition":{
+                "x":40,
+                "y":40
+              },
+              "ActionMetadata":{
+                "a1111111-a111-a111-a111-aaaaaaaaaaaa":{
+                    "position":{
+                      "x":169.6,
+                      "y":256
+                    }
+                },
+                "b2222222-b222-b222-b222-bbbbbbbbbbbb":{
+                    "position":{
+                      "x":408,
+                      "y":22.4
+                    }
+                },
+                "c3333333-c333-c333-c333-cccccccccccc":{
+                    "position":{
+                      "x":748,
+                      "y":32.8
+                    },
+                    "dynamicMetadata":{
+                      
+                    }
+                },
+                "d4444444-d444-d444-d444-dddddddddddd":{
+                    "position":{
+                      "x":1019.2,
+                      "y":40.8
+                    }
+                },
+                "e5555555-e555-e555-e555-eeeeeeeeeeee":{
+                    "position":{
+                      "x":1230.4,
+                      "y":344
+                    }
+                },
+                "f6666666-f666-f666-f666-ffffffffffff":{
+                    "position":{
+                      "x":1464.8,
+                      "y":149.6
+                    }
+                }
+              },
+              "Annotations":[
+                
+              ],
+              "name":"echo-voice-contact-flow",
+              "description":"echo-voice-contact-flow",
+              "type":"contactFlow",
+              "status":"published",
+              "hash":{
+                
+              }
+          },
+          "Actions":[
+              {
+                "Parameters":{
+                    "FlowLoggingBehavior":"Enabled"
+                },
+                "Identifier":"a1111111-a111-a111-a111-aaaaaaaaaaaa",
+                "Type":"UpdateFlowLoggingBehavior",
+                "Transitions":{
+                    "NextAction":"b2222222-b222-b222-b222-bbbbbbbbbbbb"
+                }
+              },
+              {
+                "Parameters":{
+                    "Text":"Hello, thank you for calling Echo Voice. Your vanity number translator. Please wait as i generate a vanity number for your Phone number."
+                },
+                "Identifier":"b2222222-b222-b222-b222-bbbbbbbbbbbb",
+                "Type":"MessageParticipant",
+                "Transitions":{
+                    "NextAction":"c3333333-c333-c333-c333-cccccccccccc",
+                    "Errors":[
+                      {
+                          "NextAction":"e5555555-e555-e555-e555-eeeeeeeeeeee",
+                          "ErrorType":"NoMatchingError"
+                      }
+                    ]
+                }
+              },
+              {
+                "Parameters":{
+                    "LambdaFunctionARN":"${LambdaFunction.Arn}",
+                    "InvocationTimeLimitSeconds":"3",
+                    "ResponseValidation":{
+                      "ResponseType":"STRING_MAP"
+                    }
+                },
+                "Identifier":"c3333333-c333-c333-c333-cccccccccccc",
+                "Type":"InvokeLambdaFunction",
+                "Transitions":{
+                    "NextAction":"d4444444-d444-d444-d444-dddddddddddd",
+                    "Errors":[
+                      {
+                          "NextAction":"e5555555-e555-e555-e555-eeeeeeeeeeee",
+                          "ErrorType":"NoMatchingError"
+                      }
+                    ]
+                }
+              },
+              {
+                "Parameters":{
+                    "SSML":"Your Vanity phone number is $.External.Result Goodbye!"
+                },
+                "Identifier":"d4444444-d444-d444-d444-dddddddddddd",
+                "Type":"MessageParticipant",
+                "Transitions":{
+                    "NextAction":"f6666666-f666-f666-f666-ffffffffffff",
+                    "Errors":[
+                      {
+                          "NextAction":"e5555555-e555-e555-e555-eeeeeeeeeeee",
+                          "ErrorType":"NoMatchingError"
+                      }
+                    ]
+                }
+              },
+              {
+                "Parameters":{
+                    "Text":"I am sorry, something went wrong. Please try again. Thank you!"
+                },
+                "Identifier":"e5555555-e555-e555-e555-eeeeeeeeeeee",
+                "Type":"MessageParticipant",
+                "Transitions":{
+                    "NextAction":"f6666666-f666-f666-f666-ffffffffffff",
+                    "Errors":[
+                      {
+                          "NextAction":"f6666666-f666-f666-f666-ffffffffffff",
+                          "ErrorType":"NoMatchingError"
+                      }
+                    ]
+                }
+              },
+              {
+                "Parameters":{
+                },
+                "Identifier":"f6666666-f666-f666-f666-ffffffffffff",
+                "Type":"DisconnectParticipant",
+                "Transitions":{
+                    
+                }
+              }
+          ]
+        }
+
+Outputs:
+  DynamoDBTable:
+    Description: DynamoDB table
+    Value: !Ref DynamoDBTable
+  LambdaFunction:
+    Description: Lambda function
+    Value: !GetAtt LambdaFunction.Arn
+  ConnectFlowContactFlow:
+    Description: Connect flow contact flow
+    Value: !Ref ConnectFlowContactFlow
+
+
+      
+        
