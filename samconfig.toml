@@ -17,11 +17,12 @@ lint = true
 capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
 resolve_s3 = true
-s3_prefix = "echo-voice"
+s3_prefix = "echo-project"
 region = "us-east-1"
 profile = "echo-voice"
-parameter_overrides = "ProjectName=\"echo-voice2\" ConnectInstance=\"arn:aws:connect:us-east-1:743071949205:instance/dce2318b-7037-436a-8a80-6fa798689852\""
+parameter_overrides = "ConnectInstance=\"arn:aws:connect:us-east-1:743071949205:instance/dce2318b-7037-436a-8a80-6fa798689852\" ApiKey=\"78dfe0ac22msh9db62895a17a0e3p112c90jsn6f0f4dbd6693\""
 image_repositories = []
+stack_name = "echo-project"
 
 [default.package.parameters]
 resolve_s3 = true

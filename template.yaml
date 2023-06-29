@@ -10,11 +10,15 @@ Parameters:
     Type: String
     Description: AWS Connect Instance ARN
     Default: arn:aws:connect:us-east-1:123456789012:instance/d4444444-d444-d444-d444-dddddddddddd
+
+  ApiKey:
+    Type: String
+    Description: API Key for Custom Authorizer
+    Default: 78dfe0ac22msh9db62895a17a0e3p112c90jsn6f0f4dbd6693
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 5
     MemorySize: 128
-
     Tracing: Active
   Api:
     TracingEnabled: true
@@ -32,18 +36,22 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-  LambdaFunction:
+  
+  GenerateVanityFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub '${AWS::StackName}-function'
       Handler: index.lambda_handler
       Runtime: python3.10
-      CodeUri: backend/LambdaFunction
-      Role: !GetAtt LambdaFunctionRole.Arn
+      CodeUri: backend/GenerateVanityFunction
+      Role: !GetAtt GenerateVanityFunctionRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:19
       Environment:
         Variables:
           TABLE_NAME: !Ref DynamoDBTable
-  LambdaFunctionRole:
+  
+  GenerateVanityFunctionRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub '${AWS::StackName}-function-role'
@@ -86,6 +94,8 @@ Resources:
       CodeUri: backend/DynamoDBFunction
       Role: !GetAtt DynamoDBFunctionRole.Arn
       Timeout: 30
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:19
       Environment:
         Variables:
           TABLE_NAME: !Ref DynamoDBTable
@@ -96,6 +106,9 @@ Resources:
             Path: /fetch
             Method: post
             RestApiId: !Ref FetchCallersApi
+            Auth:
+              Authorizer: CustomAuthorizer
+  
   DynamoDBFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -127,51 +140,100 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: '*'
+  
+  CustomAuthorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-custom-authorizer'
+      Handler: index.lambda_handler
+      Runtime: python3.10
+      CodeUri: backend/CustomAuthorizer
+      Description: Custom Authorizer for API Gateway Endpoints
+      Role: !GetAtt CustomAuthorizerRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:19
+      Environment:
+        Variables:
+          API_KEY: !Ref ApiKey
+  
+  CustomAuthorizerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        
+        - PolicyName: !Sub '${AWS::StackName}-custom-authorizer-logs-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+        - PolicyName: !Sub '${AWS::StackName}-xraysdk'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - xray:PutTraceSegments
+                  - xray:PutTelemetryRecords
+                Resource: '*'
+  
   FetchCallersApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
+      Auth:
+        DefaultAuthorizer: CustomAuthorizer
+        Authorizers:
+          CustomAuthorizer:
+            FunctionPayloadType: REQUEST
+            FunctionArn: !GetAtt CustomAuthorizer.Arn
+            Identity:
+              Headers:
+                - x-api-key
+              ReauthorizeEvery: 0
       DefinitionBody:
         swagger: '2.0'
         info:
-          version: '2018-11-29T18:24:29Z'
-          title: !Sub ${AWS::StackName}-FetchCallersApi
+          version: '2018-11-29T23:30:18Z'
+          title: !Sub ${AWS::StackName}-fetch-callers-api
         paths:
           /fetch:
             post:
-              consumes:
-                - application/json
-              produces:
-                - application/json
-              responses:
-                '200':
-                  description: 200 response
-                  schema:
-                    $ref: '#/definitions/Empty'
               x-amazon-apigateway-integration:
-                responses:
-                  default:
-                    statusCode: '200'
                 uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DynamoDBFunction.Arn}/invocations
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
-        definitions:
-          Empty:
-            type: object
-            title: Empty Schema
+              responses: {}
+              security:
+                - CustomAuthorizer: []
+        securityDefinitions:
+          CustomAuthorizer:
+            type: apiKey
+            name: x-api-key
+            in: header
 
-            
   ConnectInstanceAttachRole:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !GetAtt LambdaFunction.Arn
+      FunctionName: !GetAtt GenerateVanityFunction.Arn
       Principal: connect.amazonaws.com
       SourceArn: !Ref ConnectInstance
       SourceAccount: !Ref AWS::AccountId
-
-
 
   ConnectFlowContactFlow:
     Type: AWS::Connect::ContactFlow
@@ -255,7 +317,7 @@ Resources:
               },
               {
                 "Parameters":{
-                    "Text":"Hello, thank you for calling Echo Voice. Your vanity number translator. Please wait as i generate a vanity number for your Phone number."
+                    "Text":"Hello, thank you for calling Echo Voice. Your vanity number translator. Please wait as i generate a vanity number for you."
                 },
                 "Identifier":"b2222222-b222-b222-b222-bbbbbbbbbbbb",
                 "Type":"MessageParticipant",
@@ -271,7 +333,7 @@ Resources:
               },
               {
                 "Parameters":{
-                    "LambdaFunctionARN":"${LambdaFunction.Arn}",
+                    "LambdaFunctionARN":"${GenerateVanityFunction.Arn}",
                     "InvocationTimeLimitSeconds":"3",
                     "ResponseValidation":{
                       "ResponseType":"STRING_MAP"
@@ -291,7 +353,7 @@ Resources:
               },
               {
                 "Parameters":{
-                    "SSML":"Your Vanity phone number is $.External.Result Goodbye!"
+                    "SSML":"$.External.Result Goodbye!"
                 },
                 "Identifier":"d4444444-d444-d444-d444-dddddddddddd",
                 "Type":"MessageParticipant",
@@ -332,17 +394,12 @@ Resources:
               }
           ]
         }
-
+  
+      
 Outputs:
-  DynamoDBTable:
-    Description: DynamoDB table
-    Value: !Ref DynamoDBTable
-  LambdaFunction:
-    Description: Lambda function
-    Value: !GetAtt LambdaFunction.Arn
-  ConnectFlowContactFlow:
-    Description: Connect flow contact flow
-    Value: !Ref ConnectFlowContactFlow
+  FetchCallersApi:
+    Description: "Fetch Vanity API"
+    Value: !Sub "https://${FetchCallersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
 
 
       

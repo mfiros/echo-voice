@@ -6,8 +6,7 @@ const nextConfig = {
     return [
       {
         source: "/api/fetchdata",
-        destination:
-          "https://f5fqv3gg77.execute-api.us-east-1.amazonaws.com/Prod/fetch",
+        destination: process.env.API_FETCH_URL,
       },
     ];
   },

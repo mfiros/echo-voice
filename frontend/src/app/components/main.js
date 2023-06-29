@@ -24,7 +24,6 @@ function getOrdinalSuffix(day) {
 }
 
 function Main() {
-  const api = process.env.NEXT_PUBLIC_API_URL;
   // create state for vanity number
   const [vanityNumber, setVanityNumber] = useState(null);
 
@@ -35,6 +34,7 @@ function Main() {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_API_KEY,
         },
       });
 

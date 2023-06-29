@@ -1,13 +1,12 @@
 import json
 import boto3
 import os
-import logging
-from decimal import Decimal
+from aws_lambda_powertools import Logger, Tracer
+from botocore.exceptions import ClientError
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
+logger = Logger()
+tracer = Tracer()
 dynamodb = boto3.resource('dynamodb')
 dynamodb_table = os.environ.get('TABLE_NAME')
 table = dynamodb.Table(dynamodb_table)

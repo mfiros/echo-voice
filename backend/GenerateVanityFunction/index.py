@@ -3,11 +3,11 @@ import json
 import time
 import boto3
 import os
-import logging
+from aws_lambda_powertools import Logger, Tracer
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
+logger = Logger()
+tracer = Tracer()
 
 dynamodb = boto3.resource('dynamodb')
 dynamodb_table = os.environ.get('TABLE_NAME')
@@ -183,7 +183,8 @@ def lambda_handler(event, context):
 
     try:
         number = event['Details']['ContactData']['CustomerEndpoint']['Address']
-        number = number[3:]  # Remove +91 from the number
+        # get the last 10 digits of the number
+        number = number[-10:]
 
         existing_item = table.get_item(Key={'callerNumber': number})
         if 'Item' in existing_item:
