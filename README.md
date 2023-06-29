@@ -5,54 +5,42 @@ Demo: https://echo-voice.vercel.app/
 
 ```
 📦echo-voice
-┣ 📂.aws-sam
-┃ ┣ 📂build
-┃ ┃ ┣ 📂DynamoDBFunction
-┃ ┃ ┃ ┣ 📜index.py
-┃ ┃ ┃ ┗ 📜**init**.py
-┃ ┃ ┣ 📂LambdaFunction
-┃ ┃ ┃ ┣ 📜index.py
-┃ ┃ ┃ ┣ 📜words_dictionary3.json
-┃ ┃ ┃ ┣ 📜words_dictionary4.json
-┃ ┃ ┃ ┗ 📜**init**.py
-┃ ┃ ┗ 📜template.yaml
-┃ ┣ 📂cache
-┃ ┣ 📂deps
-┃ ┗ 📜build.toml
 ┣ 📂frontend
-┃ ┗ 📂echo-voice
-┃ ┃ ┣ 📂public
-┃ ┃ ┃ ┣ 📜next.svg
-┃ ┃ ┃ ┗ 📜vercel.svg
-┃ ┃ ┣ 📂src
-┃ ┃ ┃ ┗ 📂app
-┃ ┃ ┃ ┃ ┣ 📂components
-┃ ┃ ┃ ┃ ┃ ┗ 📜main.js
-┃ ┃ ┃ ┃ ┣ 📜favicon.ico
-┃ ┃ ┃ ┃ ┣ 📜globals.css
-┃ ┃ ┃ ┃ ┣ 📜layout.js
-┃ ┃ ┃ ┃ ┗ 📜page.js
-┃ ┃ ┣ 📜.env.example
-┃ ┃ ┣ 📜.gitignore
-┃ ┃ ┣ 📜jsconfig.json
-┃ ┃ ┣ 📜next.config.js
-┃ ┃ ┣ 📜package-lock.json
-┃ ┃ ┣ 📜package.json
-┃ ┃ ┣ 📜postcss.config.js
-┃ ┃ ┣ 📜README.md
-┃ ┃ ┗ 📜tailwind.config.js
+┃ ┣ 📂public
+┃ ┃ ┣ 📜next.svg
+┃ ┃ ┗ 📜vercel.svg
+┃ ┣ 📂src
+┃ ┃ ┗ 📂app
+┃ ┃ ┃ ┣ 📂components
+┃ ┃ ┃ ┃ ┗ 📜main.js
+┃ ┃ ┃ ┣ 📜favicon.ico
+┃ ┃ ┃ ┣ 📜globals.css
+┃ ┃ ┃ ┣ 📜layout.js
+┃ ┃ ┃ ┗ 📜page.js
+┃ ┣ 📜.env.local
+┃ ┣ 📜.gitignore
+┃ ┣ 📜jsconfig.json
+┃ ┣ 📜next.config.js
+┃ ┣ 📜package-lock.json
+┃ ┣ 📜package.json
+┃ ┣ 📜postcss.config.js
+┃ ┣ 📜README.md
+┃ ┗ 📜tailwind.config.js
 ┣ 📂backend
+┃ ┣ 📂CustomAuthorizer
+┃ ┃ ┣ 📜index.py
+┃ ┃ ┗ 📜__init__.py
 ┃ ┣ 📂DynamoDBFunction
 ┃ ┃ ┣ 📜index.py
-┃ ┃ ┗ 📜**init**.py
-┃ ┗ 📂LambdaFunction
+┃ ┃ ┗ 📜__init__.py
+┃ ┣ 📂GenerateVanityFunction
 ┃ ┃ ┣ 📂helper
 ┃ ┃ ┃ ┣ 📜english.txt
 ┃ ┃ ┃ ┗ 📜generate_dic.py
 ┃ ┃ ┣ 📜index.py
 ┃ ┃ ┣ 📜words_dictionary3.json
 ┃ ┃ ┣ 📜words_dictionary4.json
-┃ ┃ ┗ 📜**init**.py
+┃ ┃ ┗ 📜__init__.py
 ┣ 📜.gitignore
 ┣ 📜README.md
 ┣ 📜samconfig.toml
@@ -75,13 +63,17 @@ The application uses several AWS resources, including Lambda functions and an AP
 
 ## AWS Resources
 
-- Lambda Function: `DynamoDBFunction, GenerateVanityFunction`
+![Architecture](template.png)
+
+- Lambda Function: `DynamoDBFunction, GenerateVanityFunction, CustomAuthorizer`
 - DynamoDB: `DynamoDBTable`
 - API Gateway: `FetchCallersApi`
-- IAM: `GenerateVanityFunctionRole, DynamoDBFunctionRole, ConnectInstanceAttachRole`
+- IAM: `GenerateVanityFunctionRole, DynamoDBFunctionRole, ConnectInstanceAttachRole, CustomAuthorizerRole`
 - Connect: `ConnectFlowContactFlow`
 
-## Deploy the sample application
+![Connect Flow](connect-flow.png)
+
+## Deploy the application
 
 To build and deploy your application for the first time, run the following in your shell:
 
@@ -172,9 +164,52 @@ CREATE_IN_PROGRESS            AWS::DynamoDB::Table          DynamoDBTable       
 
 ```
 
+The ouput of the deployment should look like this:
+
+```bash
+CloudFormation outputs from deployed stack
+---------------------------------------------------------------------------------------------------------------------
+Outputs
+---------------------------------------------------------------------------------------------------------------------
+Key                 FetchCallersApi
+Description         API Gateway endpoint URL for Prod stage for FetchCallersApi function
+Value               https://1234567890.execute-api.us-east-1.amazonaws.com/Prod/fetch
+
+
+
+
+Successfully created/updated stack - echo-voice in us-east-1
+```
+
+## Frontend
+
+The frontend is a simple Nextjs app that uses the API Gateway endpoint to call the Lambda function. The frontend is located in the `frontend` folder. To run the frontend locally, run the following commands:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Environment Variables
+
+The frontend requires the following environment variables to be set:
+
+- `API_FETCH_URL`: The API Gateway endpoint URL for Prod stage for FetchCallersApi function
+- `NEXT_PUBLIC_API_KEY`: The API key for the API Gateway endpoint
+
+## Test the sample application
+
+You can use the the number `+1 213-462-1468` to test the application. This number is an AWS Connect test number that will play a message and then hang up.
+The message will result in a caller being added to the DynamoDB table. Possible vanity numbers will be generated and returned to the caller.
+
+Frontend: https://echo-voice.vercel.app/
+Displays last 5 callers and their vanity numbers.
+![Demo](demo.png)
+
 ## Cleanup
 
-To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
+To delete the application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
 
 ```bash
 sam delete --stack-name "echo-voice"

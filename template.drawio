@@ -1,0 +1,170 @@
+<mxfile host="65bd71144e" pages="2">
+    <diagram id="diagramid" name="Diagram">
+        <mxGraphModel dx="2002" dy="524" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="DynamoDBTable" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="287.5" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="GenerateVanityFunction" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="315" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="GenerateVanityFunctionRole" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.role;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="400" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="DynamoDBFunction" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="150" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="DynamoDBFunctionRole" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.role;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="250" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="CustomAuthorizer" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="50" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="CustomAuthorizerRole" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.role;" parent="1" vertex="1">
+                    <mxGeometry x="500" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="FetchCallersApi" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" parent="1" vertex="1">
+                    <mxGeometry y="50" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="ConnectInstanceAttachRole" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.policy;" parent="1" vertex="1">
+                    <mxGeometry y="250" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="ConnectFlowContactFlow" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#d01d27;gradientDirection=north;fillColor=#df2e35;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.connect;" parent="1" vertex="1">
+                    <mxGeometry y="350" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="DynamoDBFunctionFetchCallers" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" parent="1" vertex="1">
+                    <mxGeometry y="150" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="LambdaLayer" style="outlineConnect=0;fontColor=#B3B3B3;gradientColor=#aaaaaa;gradientDirection=north;fillColor=#aaaaaa;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="100" width="50" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="lambda  017000801446&#10;19|GenerateVanityFunction" value="Layers" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="3" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="312" y="326.6666666666667"/>
+                            <mxPoint x="488" y="138.33333333333334"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DynamoDBTable|GenerateVanityFunction" value="Variable" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="3" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="314" y="340"/>
+                            <mxPoint x="400" y="350"/>
+                            <mxPoint x="650" y="350"/>
+                            <mxPoint x="736" y="317.5"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="GenerateVanityFunctionRole|GenerateVanityFunction" value="Role" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="312" y="353.3333333333333"/>
+                            <mxPoint x="488" y="425"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DynamoDBTable|GenerateVanityFunctionRole" value="PolicyDocument" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="4" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="562" y="425"/>
+                            <mxPoint x="738" y="327.5"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="lambda  017000801446&#10;19|DynamoDBFunction" value="Layers" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="5" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="312" y="161.66666666666666"/>
+                            <mxPoint x="486" y="125"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DynamoDBTable|DynamoDBFunction" value="Variable" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="5" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="314" y="175"/>
+                            <mxPoint x="400" y="200"/>
+                            <mxPoint x="650" y="200"/>
+                            <mxPoint x="738" y="297.5"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="FetchCallersApi|DynamoDBFunction" value="Invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;labelBackgroundColor=none;fontColor=#7EA6E0;noEdgeStyle=1;orthogonal=1;" parent="1" source="9" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="62" y="85"/>
+                            <mxPoint x="238" y="165"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DynamoDBFunctionRole|DynamoDBFunction" value="Role" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="312" y="188.33333333333334"/>
+                            <mxPoint x="488" y="275"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DynamoDBTable|DynamoDBFunctionRole" value="PolicyDocument" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="6" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="562" y="275"/>
+                            <mxPoint x="736" y="307.5"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="lambda  017000801446&#10;19|CustomAuthorizer" value="Layers" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="7" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="312" y="85"/>
+                            <mxPoint x="488" y="111.66666666666667"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="CustomAuthorizerRole|CustomAuthorizer" value="Role" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="7" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="312" y="65"/>
+                            <mxPoint x="488" y="25"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="CustomAuthorizer|FetchCallersApi" value="FunctionArn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="9" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="62" y="65"/>
+                            <mxPoint x="238" y="75"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="GenerateVanityFunction|ConnectInstanceAttachRole" value="FunctionName" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="10" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="62" y="275"/>
+                            <mxPoint x="238" y="330"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="GenerateVanityFunction|ConnectFlowContactFlow" value="Content" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="11" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="62" y="375"/>
+                            <mxPoint x="238" y="350"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DynamoDBFunction|DynamoDBFunctionFetchCallers" value="Arn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=none;fontColor=#EA6B66;noEdgeStyle=1;orthogonal=1;" parent="1" source="12" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="62" y="175"/>
+                            <mxPoint x="238" y="185"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

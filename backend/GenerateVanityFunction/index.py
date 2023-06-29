@@ -163,14 +163,18 @@ def store_result_in_dynamodb(number, result):
 def generate_result_string(result):
     resultstring = ""
 
+    # dont take more than 3 results, exclude results if there are more than 3
+    if len(result) > 3:
+        result = result[:3]
+
     if len(result) == 1:
         if any(char.isalpha() for char in result[0]):
             resultstring = "Only one vanity phone number option available: {}. Enjoy your personalized number!".format(
                 result[0])
         else:
-            resultstring = "I'm sorry, but there are no vanity phone numbers available for your phone number."
+            resultstring = "I'm sorry, but there are no vanity numbers available for your phone number."
     else:
-        resultstring = "Here are {} vanity phone number options based on your phone number. ".format(
+        resultstring = "Here are {} vanity numbers based on your phone number. ".format(
             len(result))
         for i in range(len(result)):
             resultstring += "Option {}: {}. ".format(i+1, result[i])

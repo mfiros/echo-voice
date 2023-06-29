@@ -399,7 +399,7 @@ Resources:
 Outputs:
   FetchCallersApi:
     Description: "Fetch Vanity API"
-    Value: !Sub "https://${FetchCallersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+    Value: !Sub "https://${FetchCallersApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/fetch"
 
 
       
