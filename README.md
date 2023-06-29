@@ -1,6 +1,7 @@
 # echo-voice
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
+Demo: https://echo-voice.vercel.app/
 
 ```
 📦echo-voice
@@ -85,13 +86,16 @@ The application uses several AWS resources, including Lambda functions and an AP
 To build and deploy your application for the first time, run the following in your shell:
 
 ```bash
+Clone the repository
+git clone https://github.com/mfiros/echo-voice.git
+cd echo-voice
 sam build
 sam deploy --guided
 ```
 
 The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
 
-````bash
+```bash
 Configuring SAM deploy
 ======================
 
@@ -102,6 +106,8 @@ Configuring SAM deploy
     =========================================
     Stack Name [sam-app]: echo-voice
     AWS Region [us-east-1]: us-east-1
+    Parameter ConnectInstance [arn:aws:connect:us-east-1:1234565:instance/dce2318b-1234-1234-1234-123456789012]: arn:aws:connect:us-east-1:1234565:instance/dce2318b-1234-1234-1234-123456789012
+
     #Shows you resources changes to be deployed and require a 'Y' to initiate deploy
     Confirm changes before deploy [y/N]: y
     #SAM needs permission to be able to create roles to connect to the resources in your template
@@ -119,23 +125,52 @@ Configuring SAM deploy
     Region                       : us-east-1
     Confirm changeset            : True
     Deployment s3 bucket         : aws-sam-cli-managed-default-samclisourcebucket-1j2j2j2j2j2j
-    Capabilities                 : ["CAPABILITY_IAM"]
-    Parameter overrides          : {}
+    Capabilities                 : ["CAPABILITY_NAMED_IAM"]
+    Parameter overrides          : {"ConnectInstance": "arn:aws:connect:us-east-1:1234556:instance/dce2318b-1234-1234-1234-123456789012"}
     Signing Profiles             : {}
 
 Initiating deployment
 =====================
+CloudFormation stack changeset
+---------------------------------------------------------------------------------------------------------------------
+Operation                     LogicalResourceId             ResourceType                  Replacement
+---------------------------------------------------------------------------------------------------------------------
++ Add                         CognitoUserPoolClient         AWS::Cognito::UserPoolClien   N/A
+                                                            t
++ Add                         CognitoUserPoolDomain         AWS::Cognito::UserPoolDomai   N/A
+                                                            n
++ Add                         CognitoUserPool               AWS::Cognito::UserPool        N/A
++ Add                         ConnectFlowContactFlow        AWS::Connect::ContactFlow     N/A
++ Add                         ConnectInstanceAttachRole     AWS::Lambda::Permission       N/A
++ Add                         DynamoDBFunctionFetchCaller   AWS::Lambda::Permission       N/A
+                              sPermissionProd
++ Add                         DynamoDBFunctionRole          AWS::IAM::Role                N/A
++ Add                         DynamoDBFunction              AWS::Lambda::Function         N/A
++ Add                         DynamoDBTable                 AWS::DynamoDB::Table          N/A
++ Add                         FetchCallersApiDeployment71   AWS::ApiGateway::Deployment   N/A
+                              09639b61
++ Add                         FetchCallersApiProdStage      AWS::ApiGateway::Stage        N/A
++ Add                         FetchCallersApi               AWS::ApiGateway::RestApi      N/A
++ Add                         GenerateVanityFunctionRole    AWS::IAM::Role                N/A
++ Add                         GenerateVanityFunction        AWS::Lambda::Function         N/A
+---------------------------------------------------------------------------------------------------------------------
+
+Previewing CloudFormation changeset before deployment
+======================================================
+Deploy this changeset? [y/N]: y
+
+2023-06-29 13:33:44 - Waiting for stack create/update to complete
+
+CloudFormation events from stack operations (refresh every 5.0 seconds)
+---------------------------------------------------------------------------------------------------------------------
+ResourceStatus                ResourceType                  LogicalResourceId             ResourceStatusReason
+---------------------------------------------------------------------------------------------------------------------
+CREATE_IN_PROGRESS            AWS::DynamoDB::Table          DynamoDBTable                 -
+CREATE_IN_PROGRESS            AWS::Cognito::UserPool        CognitoUserPool               -
+CREATE_IN_PROGRESS            AWS::DynamoDB::Table          DynamoDBTable                 Resource creation Initiated
 
 
-
-## Setup process
-
-Clone the repository
-
-```bash
-git clone https://github.com/mfiros/echo-voice.git
-cd echo-voice
-````
+```
 
 ## Cleanup
 
