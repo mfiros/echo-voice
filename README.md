@@ -1,10 +1,24 @@
-# echo-voice
+# Echo-Voice
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
-Demo: https://echo-voice.vercel.app/
+This repository contains source code and supporting files for a serverless application that allows you to generate vanity numbers and use them to call your contacts. It includes the following files and folders.
 
 ```
 📦echo-voice
+┣ 📂backend
+┃ ┣ 📂CustomAuthorizer
+┃ ┃ ┣ 📜index.py
+┃ ┃ ┗ 📜__init__.py
+┃ ┣ 📂DynamoDBFunction
+┃ ┃ ┣ 📜index.py
+┃ ┃ ┗ 📜__init__.py
+┃ ┣ 📂GenerateVanityFunction
+┃ ┃ ┣ 📂helper
+┃ ┃ ┃ ┣ 📜english.txt
+┃ ┃ ┃ ┗ 📜generate_dic.py
+┃ ┃ ┣ 📜index.py
+┃ ┃ ┣ 📜words_dictionary3.json
+┃ ┃ ┣ 📜words_dictionary4.json
+┃ ┃ ┗ 📜__init__.py
 ┣ 📂frontend
 ┃ ┣ 📂public
 ┃ ┃ ┣ 📜next.svg
@@ -26,21 +40,6 @@ Demo: https://echo-voice.vercel.app/
 ┃ ┣ 📜postcss.config.js
 ┃ ┣ 📜README.md
 ┃ ┗ 📜tailwind.config.js
-┣ 📂backend
-┃ ┣ 📂CustomAuthorizer
-┃ ┃ ┣ 📜index.py
-┃ ┃ ┗ 📜__init__.py
-┃ ┣ 📂DynamoDBFunction
-┃ ┃ ┣ 📜index.py
-┃ ┃ ┗ 📜__init__.py
-┃ ┣ 📂GenerateVanityFunction
-┃ ┃ ┣ 📂helper
-┃ ┃ ┃ ┣ 📜english.txt
-┃ ┃ ┃ ┗ 📜generate_dic.py
-┃ ┃ ┣ 📜index.py
-┃ ┃ ┣ 📜words_dictionary3.json
-┃ ┃ ┣ 📜words_dictionary4.json
-┃ ┃ ┗ 📜__init__.py
 ┣ 📜.gitignore
 ┣ 📜README.md
 ┣ 📜samconfig.toml
@@ -54,6 +53,16 @@ Demo: https://echo-voice.vercel.app/
 - samconfig.toml - SAM CLI configuration file
 
 The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
+
+## Vanity Number Generator
+
+![keypad](keypad.png)
+
+- The vanity number is generated using a Lambda function that generates a vanity number from a given phone number. It uses a dictionary of words and their corresponding numbers to generate the vanity number.
+- The function is invoked when a caller calls the Connect Flow. The Connect Flow invokes the function and passes the caller's phone number as a parameter.
+- The function then generates a vanity number and returns it to the Connect Flow. The Connect Flow then uses the response to speak the vanity number to the caller. Example: If the caller's phone number is `2684623733`, the vanity number generated is `ANT-INC-FREE, ANT-INC-FRED, ANT-GMC-FREE`.
+- If function also stores the vanity number in a DynamoDB table. The table is used to store the caller's phone number and the vanity number generated for the caller.
+- The table is used to fetch the vanity number when the caller calls again.
 
 ## Requirements
 
@@ -203,8 +212,8 @@ The frontend requires the following environment variables to be set:
 You can use the the number `+1 213-462-1468` to test the application. This number is an AWS Connect test number that will play a message and then hang up.
 The message will result in a caller being added to the DynamoDB table. Possible vanity numbers will be generated and returned to the caller.
 
-Frontend: https://echo-voice.vercel.app/
-Displays last 5 callers and their vanity numbers.
+Frontend: Available at https://echo-voice.vercel.app/
+displays last 5 callers and their vanity numbers.
 ![Demo](demo.png)
 
 ## Cleanup
