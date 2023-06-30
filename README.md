@@ -43,6 +43,7 @@ This repository contains source code and supporting files for a serverless appli
 ┣ 📜.gitignore
 ┣ 📜README.md
 ┣ 📜samconfig.toml
+┣ 📜template.drawio
 ┣ 📜template.yaml
 ```
 
@@ -56,13 +57,23 @@ The application uses several AWS resources, including Lambda functions and an AP
 
 ## Vanity Number Generator
 
-![keypad](keypad.png)
+![keypad](img/keypad.png)
+
+### How it works
+
+- Detailed explanation of this project can be found [here](img/DETAILS.md).
 
 - The vanity number is generated using a Lambda function that generates a vanity number from a given phone number. It uses a dictionary of words and their corresponding numbers to generate the vanity number.
 - The function is invoked when a caller calls the Connect Flow. The Connect Flow invokes the function and passes the caller's phone number as a parameter.
 - The function then generates a vanity number and returns it to the Connect Flow. The Connect Flow then uses the response to speak the vanity number to the caller. Example: If the caller's phone number is `2684623733`, the vanity number generated is `ANT-INC-FREE, ANT-INC-FRED, ANT-GMC-FREE`.
 - If function also stores the vanity number in a DynamoDB table. The table is used to store the caller's phone number and the vanity number generated for the caller.
 - The table is used to fetch the vanity number when the caller calls again.
+
+```
+Caller Phone Number | Vanity Number
+-----------------------------------
+2684623733          | ANT-INC-FREE, ANT-INC-FRED, ANT-GMC-FREE
+```
 
 ## Requirements
 
@@ -72,15 +83,18 @@ The application uses several AWS resources, including Lambda functions and an AP
 
 ## AWS Resources
 
-![Architecture](template.png)
+![Architecture](img/template.png)
+
+The YAML template defines the following AWS resources:
 
 - Lambda Function: `DynamoDBFunction, GenerateVanityFunction, CustomAuthorizer`
 - DynamoDB: `DynamoDBTable`
 - API Gateway: `FetchCallersApi`
 - IAM: `GenerateVanityFunctionRole, DynamoDBFunctionRole, ConnectInstanceAttachRole, CustomAuthorizerRole`
+  ![IAM](img/lambdapermission.png)
 - Connect: `ConnectFlowContactFlow`
 
-![Connect Flow](connect-flow.png)
+![Connect Flow](img/connect-flow.png)
 
 ## Deploy the application
 
@@ -136,13 +150,7 @@ CloudFormation stack changeset
 ---------------------------------------------------------------------------------------------------------------------
 Operation                     LogicalResourceId             ResourceType                  Replacement
 ---------------------------------------------------------------------------------------------------------------------
-+ Add                         CognitoUserPoolClient         AWS::Cognito::UserPoolClien   N/A
-                                                            t
-+ Add                         CognitoUserPoolDomain         AWS::Cognito::UserPoolDomai   N/A
-                                                            n
-+ Add                         CognitoUserPool               AWS::Cognito::UserPool        N/A
-+ Add                         ConnectFlowContactFlow        AWS::Connect::ContactFlow     N/A
-+ Add                         ConnectInstanceAttachRole     AWS::Lambda::Permission       N/A
+AWS::Lambda::Permission       N/A
 + Add                         DynamoDBFunctionFetchCaller   AWS::Lambda::Permission       N/A
                               sPermissionProd
 + Add                         DynamoDBFunctionRole          AWS::IAM::Role                N/A
@@ -166,8 +174,7 @@ CloudFormation events from stack operations (refresh every 5.0 seconds)
 ---------------------------------------------------------------------------------------------------------------------
 ResourceStatus                ResourceType                  LogicalResourceId             ResourceStatusReason
 ---------------------------------------------------------------------------------------------------------------------
-CREATE_IN_PROGRESS            AWS::DynamoDB::Table          DynamoDBTable                 -
-CREATE_IN_PROGRESS            AWS::Cognito::UserPool        CognitoUserPool               -
+CREATE_IN_PROGRESS            AWS::DynamoDB::Table          DynamoDBTable                 -             -
 CREATE_IN_PROGRESS            AWS::DynamoDB::Table          DynamoDBTable                 Resource creation Initiated
 
 
@@ -212,9 +219,9 @@ The frontend requires the following environment variables to be set:
 You can use the the number `+1 213-462-1468` to test the application. This number is an AWS Connect test number that will play a message and then hang up.
 The message will result in a caller being added to the DynamoDB table. Possible vanity numbers will be generated and returned to the caller.
 
-Frontend: Available at https://echo-voice.vercel.app/
+Frontend is available at https://echo-voice.vercel.app/ for demo
 displays last 5 callers and their vanity numbers.
-![Demo](demo.png)
+![Demo](img/demo.png)
 
 ## Cleanup
 
@@ -226,6 +233,12 @@ sam delete --stack-name "echo-voice"
 
 ## Resources
 
-See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
-
-Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
+- [AWS SAM](https://aws.amazon.com/serverless/sam/)
+- [AWS Connect](https://aws.amazon.com/connect/)
+- [Invoke AWS Lambda functions from Amazon Connect flows](https://docs.aws.amazon.com/connect/latest/adminguide/connect-lambda-functions.html)
+- [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
+- [AWS API Gateway](https://aws.amazon.com/api-gateway/)
+- [AWS Lambda](https://aws.amazon.com/lambda/)
+- [AWS IAM](https://aws.amazon.com/iam/)
+- [AWS CloudFormation](https://aws.amazon.com/cloudformation/)
+- [AWS CloudWatch](https://aws.amazon.com/cloudwatch/)
