@@ -9,10 +9,14 @@
 
     - words_dictionary3.json contains a mapping of 3-digit numbers to words, and words_dictionary4.json contains a mapping of 4-digit numbers to words. The dictionaries are loaded into memory to avoid reading from the files multiple times.
       Sample dictionary entry:
-      `    "the": "843",       "your": "9687",
-    "and": "263",       "have": "4283",
-    "for": "367",       "more": "6673",
-   `
+      | File Name | Dictionary Entry |
+      |------------------------|------------------|
+      | words_dictionary3.json | `"the": "843"` |
+      | | `"and": "263"` |
+      | | `"for": "367"` |
+      | words_dictionary4.json | `"your": "9687"` |
+      | | `"have": "4283"` |
+      | | `"more": "6673"` |
 
     - The function get_replacements() retrieves the possible word replacements for each part of the number from the dictionaries. The generate_combinations() function generates all possible combinations of replacements based on the retrieved words. The convert_number_to_text() function combines the replacements from all three parts to generate vanity number options.
 
